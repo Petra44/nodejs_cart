@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Winkelmandje</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <%- include('partials/header.ejs'); -%>
+    <main>
+      <h3>Je bestelling</h3>
+      <p><%= cart.length %> Product(s) in cart</p>
+      <table>
+        <% cart.forEach(cartItem => { %>
+        <tr>
+          <td>Product:</td>
+          <td><%= cartItem.name %></td>
+          <td>Price: <%= cartItem.price %> €</td>
+          <td>
+            <button id="deleteBtn" data-id="<%=cartItem.id%>">Delete</button>
+          </td>
+        </tr>
+        <% })%>
+      </table>
+    </main>
+    <%- include('partials/footer.ejs'); -%>
+    <script>
+      const deleteBtns = document.querySelectorAll("#deleteBtn");
+
+      const deleteFromCart = async (id) => {
+        try {
+          await fetch("/", {
+            method: "DELETE",
+            body: JSON.stringify({ id }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          location.reload();
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      deleteBtns?.forEach((deleteBtn) => {
+        deleteBtn?.addEventListener("click", () => {
+          const id = deleteBtn.dataset.id;
+          console.log({ clickedId: id });
+          deleteFromCart(id);
+        });
+      });
+    </script>
+  </body>
+</html>
